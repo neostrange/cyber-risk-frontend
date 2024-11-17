@@ -8,7 +8,7 @@ const AssetList = () => {
   useEffect(() => {
     const fetchAssets = async () => {
       try {
-        const response = await fetch("http://172.25.161.89:5000/assets");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/assets`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }

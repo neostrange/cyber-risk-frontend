@@ -13,7 +13,7 @@ const GraphVisualization = () => {
   useEffect(() => {
     const fetchGraphData = async () => {
       try {
-        const response = await fetch("http://172.25.161.89:5000/graph");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/graph`);
         const data = await response.json();
         setGraphData(data);
       } catch (error) {

@@ -6,7 +6,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch("http://172.25.161.89:5000/dashboard-stats");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/dashboard-stats`);
         const data = await response.json();
         setStats(data);
       } catch (error) {

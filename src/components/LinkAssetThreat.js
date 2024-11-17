@@ -9,7 +9,7 @@ const LinkAssetThreat = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios.post('http://172.25.161.89:5000/link_asset_threat', {
+    axios.post(`${process.env.REACT_APP_API_URL}/link_asset_threat`, {
       asset_name: assetName,
       threat_name: threatName
     })

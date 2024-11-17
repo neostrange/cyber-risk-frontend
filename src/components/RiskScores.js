@@ -5,7 +5,7 @@ const RiskScores = () => {
   const [riskScores, setRiskScores] = useState([]);
 
   useEffect(() => {
-    axios.get('http://172.25.161.89:5000/calculate_risk')
+    axios.get(`${process.env.REACT_APP_API_URL}/calculate_risk`)
       .then(response => setRiskScores(response.data))
       .catch(error => console.error(error));
   }, []);

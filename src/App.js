@@ -10,6 +10,7 @@ import Dashboard from './components/Dashboard';
 import './App.css'; // Ensure you have this CSS file
 
 function App() {
+  console.log("env file :", process.env.REACT_APP_API_URL)
   return (
     <Router>
       <header>
@@ -23,11 +24,11 @@ function App() {
           <Route path="/" element={<h1>Welcome to Cybersecurity Risk Management</h1>} />
 
           {/* CRUD Routes for Different Nodes */}
-          <Route path="/assets" element={<CRUDTable entity="Assets" apiEndpoint="http://172.25.161.89:5000/assets" />} />
-          <Route path="/threats" element={<CRUDTable entity="Threats" apiEndpoint="http://172.25.161.89:5000/threats" />} />
-          <Route path="/vulnerabilities" element={<CRUDTable entity="Vulnerabilities" apiEndpoint="http://172.25.161.89:5000/vulnerabilities" />} />
-          <Route path="/controls" element={<CRUDTable entity="Controls" apiEndpoint="http://172.25.161.89:5000/controls" />} />
-          <Route path="/incidents" element={<CRUDTable entity="Incidents" apiEndpoint="http://172.25.161.89:5000/incidents" />} />
+          <Route path="/assets" element={<CRUDTable entity="Assets" apiEndpoint={`${process.env.REACT_APP_API_URL}/assets`} />} />
+          <Route path="/threats" element={<CRUDTable entity="Threats" apiEndpoint={`${process.env.REACT_APP_API_URL}/threats`} />} />
+          <Route path="/vulnerabilities" element={<CRUDTable entity="Vulnerabilities" apiEndpoint={`${process.env.REACT_APP_API_URL}/vulnerabilities`} />} />
+          <Route path="/controls" element={<CRUDTable entity="Controls" apiEndpoint={`${process.env.REACT_APP_API_URL}/controls`} />} />
+          <Route path="/incidents" element={<CRUDTable entity="Incidents" apiEndpoint={`${process.env.REACT_APP_API_URL}/incidents`} />} />
 
           {/* Existing Functionalities */}
           <Route path="/link" element={<LinkAssetThreat />} />

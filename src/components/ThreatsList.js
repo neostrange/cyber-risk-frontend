@@ -5,7 +5,7 @@ const ThreatsList = () => {
   const [threats, setThreats] = useState([]);
 
   useEffect(() => {
-    axios.get('http://172.25.161.89:5000/threats')
+    axios.get(`${process.env.REACT_APP_API_URL}/threats`)
       .then(response => setThreats(response.data))
       .catch(error => console.error(error));
   }, []);
