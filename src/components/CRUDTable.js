@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Button, Dropdown, notification, Table } from "antd";
+import { DeleteOutlined, MoreOutlined } from "@ant-design/icons";
+import DynamicForm from "./DynamicForm";
+import { showConfirm } from "../utils/showConfirm";
 
 const CRUDTable = ({ entity, apiEndpoint }) => {
   const [items, setItems] = useState([]);
-  const [formData, setFormData] = useState({});
-  const [editingItemId, setEditingItemId] = useState(null);
+  const [columns, setColumns] = useState([]);
 
   // Fetch items on load
   useEffect(() => {
@@ -13,108 +16,141 @@ const CRUDTable = ({ entity, apiEndpoint }) => {
       .catch((error) => console.error(`Error fetching ${entity}:`, error));
   }, [apiEndpoint, entity]);
 
-  // Handle input change
-  const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  // Create or Update an item
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const method = editingItemId ? "PUT" : "POST";
-    const endpoint = editingItemId
-      ? `${apiEndpoint}/${editingItemId}`
-      : apiEndpoint;
-
+  // Delete an item
+  const handleDelete = async (record, idKey) => {
     try {
-      const response = await fetch(endpoint, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      const response = await fetch(`${apiEndpoint}/${record[idKey]}`, {
+        method: "DELETE",
       });
       if (response.ok) {
-        const updatedItems = await response.json();
         setItems((prevItems) =>
-          editingItemId
-            ? prevItems.map((item) =>
-                item.id === editingItemId ? updatedItems : item
-              )
-            : [...prevItems, updatedItems]
+          prevItems.filter((item) => item[idKey] !== record[idKey])
         );
-        setFormData({});
-        setEditingItemId(null);
+        notification.success({
+          message: response.status,
+          description: `Record Deleted ${entity}: ${record[idKey]}`,
+        });
+      } else {
+        notification.error({
+          message: response.status,
+          description: `${response.statusText.toUpperCase()} ${entity}: ${record[idKey]}`,
+        });
       }
     } catch (error) {
-      console.error(`Error saving ${entity}:`, error);
-    }
-  };
-
-  // Delete an item
-  const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`${apiEndpoint}/${id}`, { method: "DELETE" });
-      if (response.ok) {
-        setItems((prevItems) => prevItems.filter((item) => item.id !== id));
-      }
-    } catch (error) {
+      notification.error({
+        message: `Error deleting ${entity}: ${record[idKey]}`,
+      });
       console.error(`Error deleting ${entity}:`, error);
     }
   };
 
-  // Start editing an item
-  const handleEdit = (item) => {
-    setFormData(item);
-    setEditingItemId(item.id);
+  const confirmDelete = (record) => {
+    const idKey = Object.keys(record).find(
+      (key) => key.includes("id") || key.includes("ID")
+    );
+    showConfirm({
+      title:`Delete record from ${entity}`,
+      icon: <DeleteOutlined/>,
+      content:`Are you sure you want to delete record id: ${record[idKey]}?`,
+      onOk:()=>handleDelete(record, idKey)
+    })
   };
 
-  return (
-    <div style={{ padding: "20px" }}>
-      <h2>{entity}</h2>
-      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
-        <thead>
-          <tr style={{ backgroundColor: "#f4f4f4" }}>
-            {items.length > 0 &&
-              Object.keys(items[0]).map((key) => (
-                <th key={key} style={{ border: "1px solid #ddd", padding: "8px" }}>
-                  {key}
-                </th>
-              ))}
-            <th style={{ border: "1px solid #ddd", padding: "8px" }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((item, index) => (
-            <tr key={index}>
-              {Object.values(item).map((value, i) => (
-                <td key={i} style={{ border: "1px solid #ddd", padding: "8px" }}>
-                  {value}
-                </td>
-              ))}
-              <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                <button onClick={() => handleEdit(item)}>Edit</button>
-                <button onClick={() => handleDelete(item.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  useEffect(() => {
+    if (items.length) {
+      const columns = [
+        ...Object.keys(items[0]).map((key) => ({
+          title: key
+            .replace(/([A-Z])/g, " $1")
+            .replace(/^./, (str) => str.toUpperCase()), // Format title
+          dataIndex: key,
+          width: `${key.length}%`,
+          key,
+        })),
+        {
+          title: " ",
+          key: "set",
+          fixed: "right",
+          width: "2%",
+          align: "center",
+          render: (_, record) => {
+            return (
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: "edit",
+                      label: (
+                        <DynamicForm
+                          items={items}
+                          entity={entity}
+                          apiEndpoint={apiEndpoint}
+                          editingItemId={record}
+                          setItems={setItems}
+                        />
+                      ),
+                    },
+                    {
+                      key: "delete",
+                      label: (
+                        <>
+                          <DeleteOutlined /> Delete
+                        </>
+                      ),
+                      danger: true,
+                      onClick: () => confirmDelete(record),
+                    },
+                  ],
+                }}
+                trigger={["click"]}
+              >
+                <Button icon={<MoreOutlined />} />
+              </Dropdown>
+            );
+          },
+        },
+      ];
+      setColumns(columns);
+    }
+  }, [items]);
 
-      <h3>{editingItemId ? "Edit" : "Add"} {entity}</h3>
-      <form onSubmit={handleSubmit}>
-        {items.length > 0 &&
-          Object.keys(items[0]).map((key) => (
-            <div key={key} style={{ marginBottom: "10px" }}>
-              <label>{key}: </label>
-              <input
-                type="text"
-                name={key}
-                value={formData[key] || ""}
-                onChange={handleInputChange}
-              />
-            </div>
-          ))}
-        <button type="submit">{editingItemId ? "Update" : "Create"}</button>
-      </form>
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        padding: "10px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "10px",
+        }}
+      >
+        <div>
+          <h2>{entity}</h2>
+        </div>
+        <div>
+          <DynamicForm
+            items={items}
+            entity={entity}
+            apiEndpoint={apiEndpoint}
+            setItems={setItems}
+          />
+        </div>
+      </div>
+      <Table
+        scroll={{
+          x: "max-content", // Enable horizontal scrolling if content overflows
+        }}
+        dataSource={items.map((item) => ({
+          ...item,
+          key: item.assetID || Math.random().toString(),
+        }))}
+        columns={columns}
+      />
     </div>
   );
 };
