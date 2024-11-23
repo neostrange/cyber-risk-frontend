@@ -1,17 +1,4 @@
-.App {
-  text-align: center;
-}
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
 
 body {
   font-family: 'Arial', sans-serif;
@@ -36,13 +23,20 @@ main {
 }
 
 footer {
-  background-color: #d3d3d3; /* Light grey footer background */
-  padding: 10px;
+  background-color: rgba(222,222,222,0.6); /* Light grey footer background */
+  position: fixed;
+  bottom:0;
+  /* margin-left: 40%; */
+  /* padding: 10px; */
   text-align: center;
-  position: relative;
-  bottom: 0;
+  /* position: absolute; */
+  /* bottom: 0; */
   width: 100%;
   color: #333; /* Dark grey text */
+  z-index: 2;
+}
+.ant-layout-footer{
+  background-color: rgba(222,222,222,0.8);
 }
 
 .App-header {
@@ -67,4 +61,96 @@ footer {
   to {
     transform: rotate(360deg);
   }
+}
+
+.ant-table-content .ant-table-thead th.ant-table-cell {
+	padding: 14px 12px;
+	line-height: 19px;
+	font-weight: 400;
+	font-size: 14px;
+	color: #6F7071;
+	border-color: #E5E7EB;
+	background: #fff;
+	white-space: nowrap;
+}
+.ant-table-content .ant-table-thead th.ant-table-cell:before {
+	display: none;
+}
+
+.ant-table-content .ant-table-tbody td.ant-table-cell {
+	padding: 16px 12px;
+	line-height: 19px;
+	font-weight: 400;
+	font-size: 14px;
+	color: #090A0B;
+	border-color: #E5E7EB;
+	background: #fff;
+	white-space: nowrap;
+}
+
+.ant-table-wrapper .ant-table {
+	padding: 16px 24px;
+	box-shadow: 0px 1px 4px 0px rgba(0, 16, 32, 0.12);
+	background: #fff;
+	border-radius: 8px;
+	font-family: 'Roboto', sans-serif !important;
+}
+
+.ant-table-wrapper .ant-table .ant-table-content .ant-table-thead th.ant-table-cell:first-child {
+	padding-left: 0px;
+}
+
+.ant-table-wrapper .ant-table .ant-table-content .ant-table-tbody td.ant-table-cell:first-child {
+	padding-left: 0px;
+}
+
+.ant-table-wrapper .ant-table-pagination.ant-pagination {
+	margin-top: 30px;
+}
+
+.ant-table-wrapper .ant-table .ant-table-content .ant-table-thead tr th,
+.ant-table-wrapper .ant-table .ant-table-content .ant-table-thead tr td {
+	background: #fff;
+}
+
+.ant-table-wrapper .ant-table .ant-table-content col.ant-table-expand-icon-col {
+
+	width: 32px;
+	max-width: 32px;
+}
+
+.ant-table-wrapper .ant-table .ant-table-content .ant-table-tbody tr.active-row td {
+	border-bottom: none;
+	border-top: 1px solid #090A0B;
+}
+
+.ant-table-wrapper .ant-table .ant-table-content .ant-table-tbody tr.active-row+tr.ant-table-expanded-row>td {
+	border-bottom: 1px solid #090A0B;
+}
+
+.ant-table-wrapper .ant-table .ant-table-content .ant-table-tbody tr td {
+	padding: 18px 12px;
+}
+
+.ant-table-wrapper .ant-table .ant-table-content .ant-table-tbody tr td .ant-table-row-expand-icon::before,
+.ant-table-wrapper .ant-table .ant-table-content .ant-table-tbody tr td .ant-table-row-expand-icon::after {
+	content: none;
+}
+
+
+/* Global Styles */
+body {
+  /* overflow: hidden; Optional: to avoid extra scrollbars */
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar for Webkit Browsers (Chrome, Edge, Safari) */
+
+/* For Firefox */
+* {
+  scrollbar-width: thin; /* Options: auto, thin, none */
+  scrollbar-color: #5b5b98 #e4dbfc; /* thumb color, track color */
 }
